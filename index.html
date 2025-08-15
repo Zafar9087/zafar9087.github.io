@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Дни Тренировки</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(135deg, #181d20 0%, #000000 100%);
+      margin: 0;
+      padding: 0;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ffffff;
+      font-weight: 900;
+      letter-spacing: 1px;
+      margin: 20px 0; 
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: repeat(7, 150px);
+      gap: 15px;
+      justify-content: center;
+      padding: 30px;
+      border: 2px solid #ffffffa4; /* Для отладки */
+      background: linear-gradient(135deg, #181d20 0%, #000000 100%);
+    }
+
+    @media (max-width: 768px) {
+      .main {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .day {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      h2 {
+        font-size: 20px;
+        padding: 0 10px;
+      }
+    }
+
+    .day {
+      background: linear-gradient(45deg, #1a0a5b, #5f2063);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transition: 0.3s;
+    }
+
+    .day.locked {
+      pointer-events: none;
+      filter: grayscale(1);
+      opacity: 0.3;
+    }
+
+    .day.completed {
+      background: #4caf50;
+      color: rgb(255, 255, 255);
+      opacity: 0.7;
+    }
+
+    .day.missed {
+      background-color: #b22222 !important;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+
+    .day button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #ffffff;
+      color: #4682b4;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .day button:hover {
+      background-color: #3ce842;
+    }
+
+    .reset-btn {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      background: #b22222;
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .reset-btn:hover {
+      background: #ff4444;
+    }
+    .reset-btn:active {
+      background: #ff0000;
+    }
+    .result-btn {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      background: #4682b4;
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .result-btn:hover {
+      background: #5a9bd4;
+    }
+    .result-btn:active {
+      background: #007acc;
+    }
+    .day.completed, .day.missed {
+      animation: fadeInUp 0.5s ease-in-out;
+    }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .button {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+  </style>
+  <script>
+    function resetProgress() {
+      if (confirm('Are you sure you want to reset your progress?')) {
+        localStorage.removeItem('startDate');
+        localStorage.removeItem('progress');
+        location.reload();
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <h2>Make your body better</h2>
+  <div class="button">
+  <button class="reset-btn" onclick="resetProgress()">reset</button>
+  <button onclick="window.location.href='body result.html'" class="result-btn">result</button>
+   </div>
+  <div class="main" id="days-container"></div>
+
+  <script>
+    const totalDays = 30;
+    const container = document.getElementById('days-container');
+
+    function normalizeDate(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    const today = normalizeDate(new Date());
+
+    // Устанавливаем дату начала, если её нет
+    if (!localStorage.getItem('startDate')) {
+      console.log('Ставим startDate');
+      localStorage.setItem('startDate', today.toISOString());
+      localStorage.setItem('progress', '[]'); // сбрасываем прогресс
+    }
+
+    const startDate = normalizeDate(new Date(localStorage.getItem('startDate')));
+    const dayDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+    const currentDayIndex = Math.min(dayDiff + 1, totalDays);
+
+    const progress = JSON.parse(localStorage.getItem('progress') || '[]');
+
+    console.log(`Progress: ${JSON.stringify(progress)}`);  // Проверим, что прогресс сохранен
+    console.log(`Сегодняшний день: ${currentDayIndex}`);  // Проверим текущий день
+
+    function isCompleted(day) {
+      return progress.some(p => p.day === day);
+    }
+
+    function isMissed(day) {
+      return day < currentDayIndex && !isCompleted(day);
+    }
+
+    function saveProgress(day, time, reps) {
+      progress.push({ day, time, reps });
+      localStorage.setItem('progress', JSON.stringify(progress));
+    }
+
+    function renderDays() {
+      container.innerHTML = '';  // Очистим контейнер перед добавлением новых элементов
+      for (let i = 1; i <= totalDays; i++) {
+        const div = document.createElement('div');
+        div.classList.add('day');
+
+        if (isCompleted(i)) {
+          div.classList.add('completed');
+          const data = progress.find(p => p.day === i);
+          div.innerHTML = `День ${i}<br>${data.time} мин<br>${data.reps} раз`;
+        } else if (isMissed(i)) {
+          div.classList.add('missed');
+          div.innerHTML = `День ${i}<br>❌ Пропущен`;
+        } else if (i === currentDayIndex) {
+          div.innerHTML = `День ${i}<br><button>Начать</button>`;
+          div.querySelector('button').addEventListener('click', () => {
+            localStorage.setItem('currentDay', i);
+            window.location.href = 'timer.html';
+          });
+        } else {
+          div.classList.add('locked');
+          div.innerHTML = `День ${i}<br>🔒 Заблокировано`;
+        }
+
+        container.appendChild(div);
+      }
+    }
+
+    renderDays();
+  </script>
+</body>
+</html>
