@@ -288,10 +288,10 @@
       <button class="top-bar-btn menu-btn" id="menuBtn">⋮</button>
     </div>
   </div>
-  <div class="mobile-menu" id="mobileMenu" style="display: none;">
-    <a href="randomizer.html" class="menu-item" id="mobileRandomizerBtn">🎲 Рандом</a>
-    <button class="menu-item" id="mobileLangBtn">English</button>
-  </div>
+    <div class="mobile-menu" id="mobileMenu" style="display: none; flex-direction: column;">
+      <a href="randomizer.html" class="menu-item" id="mobileRandomizerBtn">🎲 Рандом</a>
+      <button class="menu-item" id="mobileLangBtn">English</button>
+    </div>
   <div style="height:80px;"></div> <!-- Spacer for fixed top bar -->
   <div class="container" id="animeContainer"></div>
 
@@ -554,8 +554,12 @@
     const searchDiv = document.querySelector('.search');
 
     menuBtn.addEventListener('click', () => {
-      const isVisible = mobileMenu.style.display === 'flex';
-      mobileMenu.style.display = isVisible ? 'none' : 'flex';
+      const isVisible = mobileMenu.classList.contains('show');
+      if (isVisible) {
+        mobileMenu.classList.remove('show');
+      } else {
+        mobileMenu.classList.add('show');
+      }
     });
 
     searchIcon.addEventListener('click', () => {
