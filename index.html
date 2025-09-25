@@ -1,252 +1,591 @@
-<!DOCTYPE html>
-<html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="google-site-verification" content="9bBo2MAxK3NHVZWouw9RNPq6MuUw-ZCV7x1Gz5g5uIA" />
-  <meta name="yandex-verification" content="9c611255d7191056" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Дни Тренировки</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="Flux_Dev_Logo_design_for_AnimeFound_sleek_and_modern_dark_blue_2.png"> <!-- Оставляем PNG для Apple -->
+  <!-- SEO -->
+  <meta name="title" content="AnimeFound - Найди своё аниме">
+  <meta name="description" content="AnimeFound — база аниме с трейлерами, описанием, рейтингами и поиском. Находи любое аниме легко!">
+
+  <!-- Open Graph (для Facebook, Telegram, VK) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://your-site.com/">
+  <meta property="og:title" content="AnimeFound - Найди своё аниме">
+  <meta property="og:description" content="AnimeFound — база аниме с трейлерами, описанием, рейтингами и поиском.">
+  <meta property="og:image" content="https://your-site.com/preview.png">
+
+  <!-- Twitter Card (для Twitter/X) -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://your-site.com/">
+  <meta name="twitter:title" content="AnimeFound - Найди своё аниме">
+  <meta name="twitter:description" content="AnimeFound — база аниме с трейлерами, описанием, рейтингами и поиском.">
+  <meta name="twitter:image" content="https://your-site.com/preview.png">
+
+  <!-- Favicon -->
+ 
+
+
+  <title>AnimeFound</title>
   <style>
+      .top-bar { /* Updated to glassmorphism */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 200;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 32px;
+        background: rgba(10, 15, 26, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(77, 166, 255, 0.1);
+      }
+      .top-bar-btn {
+        background: linear-gradient(90deg, #4da6ff 0%, #1c75d8 100%);
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        font-size: 1em;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        transition: background 0.2s, transform 0.2s;
+        text-decoration: none;
+        display: inline-block;
+        margin-left: 30px;
+      }
+      .top-bar-btn:hover {
+        background: linear-gradient(90deg, #1c75d8 0%, #4da6ff 100%);
+        transform: scale(1.05);
+      }
+      .watch-btn {
+        background: linear-gradient(90deg, #2ecc40 0%, #27ae60 100%);
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        font-size: 1.1em;
+        padding: 12px 32px;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        transition: background 0.2s, transform 0.2s;
+        margin: 0 auto 24px auto;
+        display: block;
+      }
+      .watch-btn:hover {
+        background: linear-gradient(90deg, #27ae60 0%, #2ecc40 100%);
+        transform: scale(1.05);
+      }
     body {
-      font-family: sans-serif;
-      background: linear-gradient(135deg, #181d20 0%, #000000 100%);
       margin: 0;
-      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #0a0f1a 0%, #11294d 100%);
+      color: #e0e6f7;
     }
-
-    h2 {
-      text-align: center;
-      color: #ffffff;
-      font-weight: 900;
-      letter-spacing: 1px;
-      margin: 20px 0; 
+    .search { /* Simplified and integrated into top-bar */
+      margin-left: 32px;
+      max-width: 400px;
+      width: 100%;
     }
-
-    .main {
-      display: grid;
-      grid-template-columns: repeat(7, 150px);
-      gap: 15px;
-      justify-content: center;
-      padding: 30px;
-      border: 2px solid #ffffffa4; /* Для отладки */
-      background: linear-gradient(135deg, #181d20 0%, #000000 100%);
-    }
-
-    @media (max-width: 768px) {
-      .main {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        padding: 10px;
-      }
-
-      .day {
-        font-size: 14px;
-        padding: 10px;
-      }
-
-      h2 {
-        font-size: 20px;
-        padding: 0 10px;
-      }
-    }
-
-    .day {
-      background: linear-gradient(45deg, #1a0a5b, #5f2063);
-      color: white;
-      text-align: center;
-      padding: 20px;
+    #searchInput {
+      padding: 10px 18px;
+      width: 100%;
+      border: 1px solid rgba(77, 166, 255, 0.2);
       border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      font-size: 1em;
+      background: rgba(35, 42, 69, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      box-shadow: inset 0 1px 4px rgba(0,0,0,0.2);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    #searchInput::placeholder {
+      color: #8a9ac1;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 0 20px 40px;
+      max-width: 1400px;
+      margin: auto;
+    }
+    .anime-box {
+      background: rgba(35, 42, 69, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(77, 166, 255, 0.2);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: transform 0.25s, box-shadow 0.25s;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      color: #eee;
+    }
+    .anime-box:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(77, 166, 255, 0.2);
+    }
+    .anime-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .anime-content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .anime-title {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #4da6ff;
+      text-align: center;
+    }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
       justify-content: center;
-      opacity: 1;
-      transition: 0.3s;
     }
-
-    .day.locked {
-      pointer-events: none;
-      filter: grayscale(1);
-      opacity: 0.3;
+    .badge {
+      background: rgba(77, 166, 255, 0.15);
+      border: 1px solid rgba(77, 166, 255, 0.3);
+      color: #e0e6f7;
+      padding: 5px 12px;
+      font-size: 0.8em;
+      border-radius: 30px;
     }
-
-    .day.completed {
-      background: #4caf50;
-      color: rgb(255, 255, 255);
-      opacity: 0.7;
+    .anime-desc {
+      font-size: 0.9em;
+      color: #ccc;
+      line-height: 1.4em;
+      max-height: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+      flex-grow: 1;
+      margin-bottom: 10px;
     }
-
-    .day.missed {
-      background-color: #b22222 !important;
-      opacity: 1 !important;
-      filter: none !important;
-    }
-
-    .day button {
-      margin-top: 10px;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 8px;
-      background-color: #ffffff;
-      color: #4682b4;
-      font-weight: 900;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .day button:hover {
-      background-color: #3ce842;
-    }
-
-    .reset-btn {
-      display: block;
-      margin: 0 auto 20px auto;
-      padding: 10px 24px;
-      border: none;
-      border-radius: 8px;
-      background: #b22222;
+    .watch-btn {
+      background: linear-gradient(90deg, #4da6ff 0%, #1c75d8 100%);
       color: #fff;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .reset-btn:hover {
-      background: #ff4444;
-    }
-    .reset-btn:active {
-      background: #ff0000;
-    }
-    .result-btn {
-      display: block;
-      margin: 0 auto 20px auto;
-      padding: 10px 24px;
       border: none;
-      border-radius: 8px;
-      background: #4682b4;
-      color: #fff;
-      font-weight: bold;
-      font-size: 16px;
+      border-radius: 12px;
+      font-size: 0.9em;
+      padding: 8px 18px;
       cursor: pointer;
-      transition: background 0.3s;
-    }
-    .result-btn:hover {
-      background: #5a9bd4;
-    }
-    .result-btn:active {
-      background: #007acc;
-    }
-    .day.completed, .day.missed {
-      animation: fadeInUp 0.5s ease-in-out;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(77, 166, 255, 0.2);
+      transition: all 0.3s ease;
+      align-self: center;
     }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .button {
-          display: flex;
-          flex-direction: row;
-          justify-content: center;
-          align-items: center;
-          margin-bottom: 20px;
-        }
-  </style>
-  <script>
-    function resetProgress() {
-      if (confirm('Are you sure you want to reset your progress?')) {
-        localStorage.removeItem('startDate');
-        localStorage.removeItem('progress');
-        location.reload();
+    .load-more {
+      display: block;
+      margin: 20px auto 40px;
+      padding: 12px 24px;
+      font-size: 1em;
+      border: none;
+      border-radius: 10px;
+      background: #4da6ff;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .load-more:hover {
+      background: #1c75d8;
+    }
+
+    .mobile-menu {
+      position: absolute;
+      top: 100%;
+      right: 32px;
+      background: rgba(35, 42, 69, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(77, 166, 255, 0.2);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      z-index: 201;
+    }
+    .menu-item {
+      background: none;
+      border: none;
+      color: #e0e6f7;
+      padding: 12px 20px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: bold;
+      text-decoration: none;
+      display: block;
+      transition: background 0.2s;
+    }
+    .menu-item:hover {
+      background: rgba(77, 166, 255, 0.1);
+    }
+
+    /* 📱 Адаптация для телефонов */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.6em;
+      }
+      .container {
+        grid-template-columns: 1fr; /* по одной карточке */
+        padding: 0 12px 30px;
+      }
+      .anime-box {
+        max-width: 100%;
+      }
+      .anime-img {
+        height: 180px;
+      }
+      .search {
+        display: none;
+      }
+      .top-bar-actions {
+        display: none;
+      }
+      .mobile-actions {
+        display: flex;
+      }
+      .trailer-btn {
+        font-size: 0.8em;
+        padding: 7px 12px;
+      }
+      .badge {
+        font-size: 0.7em;
+        padding: 3px 7px;
       }
     }
-  </script>
+  </style>
 </head>
 <body>
 
-  <h2>Make your body better</h2>
-  <div class="button">
-  <button class="reset-btn" onclick="resetProgress()">reset</button>
-  <button onclick="window.location.href='body result.html'" class="result-btn">result</button>
-   </div>
-  <div class="main" id="days-container"></div>
+  <div class="top-bar">
+    <a href="intro.html" style="text-decoration:none; flex-shrink: 0;"><h1 style="margin:0;color:#4da6ff;">AnimeFound</h1></a>
+    <div class="search" style="flex-grow: 1; margin-left: 20px; margin-right: 20px;">
+      <input type="text" id="searchInput" placeholder="Search anime..." />
+    </div>
+    <div class="top-bar-actions" style="display: flex; align-items: center; flex-shrink: 0;">
+      <a href="randomizer.html" class="top-bar-btn" id="randomizerBtn">🎲 Рандом</a>
+      <button class="top-bar-btn" id="langBtn">English</button>
+    </div>
+    <div class="mobile-actions" style="display: none; align-items: center; flex-shrink: 0;">
+      <button class="top-bar-btn search-icon" id="searchIcon">🔍</button>
+      <button class="top-bar-btn menu-btn" id="menuBtn">⋮</button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu" style="display: none;">
+    <a href="randomizer.html" class="menu-item" id="mobileRandomizerBtn">🎲 Рандом</a>
+    <button class="menu-item" id="mobileLangBtn">English</button>
+  </div>
+  <div style="height:80px;"></div> <!-- Spacer for fixed top bar -->
+  <div class="container" id="animeContainer"></div>
+
+  <p id="noResults" style="text-align:center; display:none; margin-top:20px; font-size:1.2em; color:#ff6666;">
+    No results found.
+  </p>
+
+  <button class="load-more" id="loadMoreBtn">Load More</button>
 
   <script>
-    const totalDays = 30;
-    const container = document.getElementById('days-container');
-
-    function normalizeDate(date) {
-      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      // Language selector logic
+    const langBtn = document.getElementById('langBtn');    
+    let currentLang = 'en';
+    const translations = {
+      en: {
+        searchPlaceholder: 'Search anime...',
+        noResults: 'No results found.',
+        loadMore: 'Load More',
+        watchAnime: 'Watch Anime',
+        trailer: 'Watch Trailer',
+        noTrailer: 'No Trailer',
+        siteTitle: 'AnimeFound',
+        randomizerBtn: '🎲 Random'
+      },
+      ru: {
+        searchPlaceholder: 'Поиск аниме...',
+        noResults: 'Ничего не найдено.',
+        loadMore: 'Показать ещё',
+        watchAnime: 'Смотреть аниме',
+        trailer: 'Смотреть трейлер',
+        noTrailer: 'Нет трейлера',
+        siteTitle: 'АнимеПоиск',
+        randomizerBtn: '🎲 Рандом'
+      }
+    };
+    function updateLanguageUI() {
+  document.getElementById('searchInput').placeholder = translations[currentLang].searchPlaceholder;
+  document.getElementById('noResults').textContent = translations[currentLang].noResults;
+  document.getElementById('loadMoreBtn').textContent = translations[currentLang].loadMore;
+  document.getElementById('randomizerBtn').textContent = translations[currentLang].randomizerBtn;
+  document.querySelector('.top-bar h1').textContent = translations[currentLang].siteTitle;
+  document.getElementById('langBtn').textContent = currentLang === 'en' ? 'Русский' : 'English';
     }
 
-    const today = normalizeDate(new Date());
+      function updateLanguageUI() {
+        document.getElementById('searchInput').placeholder = translations[currentLang].searchPlaceholder;
+        document.getElementById('noResults').textContent = translations[currentLang].noResults;
+        document.getElementById('loadMoreBtn').textContent = translations[currentLang].loadMore;
+      }
 
-    // Устанавливаем дату начала, если её нет
-    if (!localStorage.getItem('startDate')) {
-      console.log('Ставим startDate');
-      localStorage.setItem('startDate', today.toISOString());
-      localStorage.setItem('progress', '[]'); // сбрасываем прогресс
-    }
-
-    const startDate = normalizeDate(new Date(localStorage.getItem('startDate')));
-    const dayDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-    const currentDayIndex = Math.min(dayDiff + 1, totalDays);
-
-    const progress = JSON.parse(localStorage.getItem('progress') || '[]');
-
-    console.log(`Progress: ${JSON.stringify(progress)}`);  // Проверим, что прогресс сохранен
-    console.log(`Сегодняшний день: ${currentDayIndex}`);  // Проверим текущий день
-
-    function isCompleted(day) {
-      return progress.some(p => p.day === day);
-    }
-
-    function isMissed(day) {
-      return day < currentDayIndex && !isCompleted(day);
-    }
-
-    function saveProgress(day, time, reps) {
-      progress.push({ day, time, reps });
-      localStorage.setItem('progress', JSON.stringify(progress));
-    }
-
-    function renderDays() {
-      container.innerHTML = '';  // Очистим контейнер перед добавлением новых элементов
-      for (let i = 1; i <= totalDays; i++) {
-        const div = document.createElement('div');
-        div.classList.add('day');
-
-        if (isCompleted(i)) {
-          div.classList.add('completed');
-          const data = progress.find(p => p.day === i);
-          div.innerHTML = `День ${i}<br>${data.time} мин<br>${data.reps} раз`;
-        } else if (isMissed(i)) {
-          div.classList.add('missed');
-          div.innerHTML = `День ${i}<br>❌ Пропущен`;
-        } else if (i === currentDayIndex) {
-          div.innerHTML = `День ${i}<br><button>Начать</button>`;
-          div.querySelector('button').addEventListener('click', () => {
-            localStorage.setItem('currentDay', i);
-            window.location.href = 'timer.html';
-          });
+      langBtn.addEventListener('click', () => {
+        if (currentLang === 'en') {
+          langBtn.textContent = 'Русский';
+          currentLang = 'ru';
+          document.body.setAttribute('lang', 'ru');
         } else {
-          div.classList.add('locked');
-          div.innerHTML = `День ${i}<br>🔒 Заблокировано`;
+          langBtn.textContent = 'English';
+          currentLang = 'en';
+          document.body.setAttribute('lang', 'en');
+        }
+        updateLanguageUI();
+        updateMobileMenu();
+        loadAnime(true); // reload anime cards with new language
+      });
+      updateLanguageUI();
+    let currentPage = 1;
+    const limit = 24;
+    let searchMode = false;
+    let searchQuery = "";
+
+    async function loadAnime(reset=false) {
+      try {
+        let url = "";
+        let data = { data: [] };
+        const container = document.getElementById("animeContainer");
+        if (reset) container.innerHTML = "";
+
+        if (currentLang === 'ru') {
+          // Use Shikimori API for Russian
+          if (searchMode && searchQuery) {
+            url = `https://shikimori.one/api/animes?search=${encodeURIComponent(searchQuery)}&limit=${limit}&page=${currentPage}`;
+          } else {
+            url = `https://shikimori.one/api/animes?limit=${limit}&page=${currentPage}&order=popularity`;
+          }
+          const res = await fetch(url);
+          data.data = await res.json();
+        } else {
+          // Use Jikan API for English
+          if (searchMode && searchQuery) {
+            url = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(searchQuery)}&limit=${limit}&page=${currentPage}`;
+          } else {
+            url = `https://api.jikan.moe/v4/top/anime?page=${currentPage}&limit=${limit}`;
+          }
+          const res = await fetch(url);
+          data = await res.json();
         }
 
-        container.appendChild(div);
+        if (!data.data || data.data.length === 0) {
+          document.getElementById("noResults").style.display = "block";
+          return;
+        } else {
+          document.getElementById("noResults").style.display = "none";
+        }
+
+        const hentaiGenres = ['hentai', 'хентай', 'adult', 'ecchi'];
+        const hentaiRatings = ['rx', 'r18', '18+', 'r+ (mild nudity)'];
+        const blockKeywords = [
+          'атака девушек', 'напор девушек', 'поворот девушек', 'girl attack', 'girl twist', 'ecchi', 'эротика', 'фансервис', 'fanservice', 'sexual', 'sex', 'nsfw', 'r18', 'adult', 'хентай', 'hentai'
+        ];
+        const bannedTitles = [
+          'девичье обучение', 'пятнадцать красивых девушек', 'ансамбль девушек', 'сними меня', 'крусалочка', 'атака пиратов',
+          'неприличные развлечения для девушек', 'жизнь двух девушек', 'полное событие', 'сникерс', 'секретное назначение девушек. ниндзя. спецвыпуски',
+          'секретное назначение девушек. ниндзя. ова', 'девушка в офсайте', 'девушка в скарлупе', 'девушка из векельных новостей',
+          'девушка из прогноза', 'девушка влюбилась в старший спецвыпуск', 'девушка со странностями', 'девушка-волшебница ай',
+          'девушка-волшебница мерруру', 'девушка со странностями 2', 'девушка влюбилась в старшую сестру ова',
+          'девушка-детектив похвалил хулиганы', 'девушка из фантазии', 'девушка-демон за курой спецвыпуски',
+          'девушка с гитарой', 'девушка что надо',
+          'академия святая мария', 'фортуна и удача', 'аякаши и мегами: священный дух', 'аукцион рабынь',
+          // Оригинальные английские названия
+          'offside girl', 'girl in offside', 'ensemble of girls', 'take me off', 'crusalka', 'pirates attack',
+          'naughty entertainment for girls', 'life of two girls', 'full event', 'snickers', 'secret mission girls ninja special',
+          'secret mission girls ninja ova', 'girl in shell', 'girl from vekel news', 'girl from forecast',
+          'girl fell in love with older special', 'girl with oddities', 'magical girl ai', 'magical girl merruru',
+          'girl with oddities 2', 'girl fell in love with older sister ova', 'girl-detective praised hooligans', 'girl from fantasy',
+          'girl-demon for chicken special', 'girl with guitar', 'girl what you need'
+        ];
+        function isHentai(anime) {
+          if (anime.genres && anime.genres.some(g => g.name && (hentaiGenres.includes(g.name.toLowerCase()) || g.name.toLowerCase() === 'ecchi' || g.name.toLowerCase() === 'этти'))) return true;
+          if (anime.rating && hentaiRatings.includes(anime.rating.toLowerCase())) return true;
+          if (anime.russian && anime.russian.toLowerCase().includes('хентай')) return true;
+          if (anime.name && anime.name.toLowerCase().includes('hentai')) return true;
+          if (anime.title && anime.title.toLowerCase().includes('hentai')) return true;
+          // Блокировать по ключевым словам
+          for (const kw of blockKeywords) {
+            if ((anime.russian && anime.russian.toLowerCase().includes(kw)) || (anime.name && anime.name.toLowerCase().includes(kw)) || (anime.title && anime.title.toLowerCase().includes(kw))) {
+              return true;
+            }
+          }
+          return false;
+        }
+        data.data.forEach(anime => {
+          if (isHentai(anime)) return;
+          // Бан по названиям
+          const allNames = [anime.russian, anime.name, anime.title].map(x => (x || '').toLowerCase());
+          if (bannedTitles.some(ban => allNames.some(n => n.includes(ban)))) {
+            return;
+          }
+          const box = document.createElement("div");
+          box.className = "anime-box";
+          box.style.cursor = "pointer";
+          let title, desc, img, episodes, score, year;
+          if (currentLang === 'ru') {
+            // Shikimori fields
+            title = anime.russian || anime.name;
+            img = anime.image && anime.image.preview ? `https://shikimori.one${anime.image.preview}` : "";
+            episodes = anime.episodes;
+            score = anime.score;
+            year = anime.aired_on ? anime.aired_on.split('-')[0] : "";
+            desc = (anime.description && anime.description.trim().length > 0)
+              ? anime.description.slice(0, 150) + "..."
+              : "";
+          } else {
+            // Jikan fields
+            title = anime.title;
+            desc = anime.synopsis ? anime.synopsis.slice(0, 150) + "..." : "No description available";
+            img = anime.images.jpg.image_url;
+            episodes = anime.episodes;
+            score = anime.score;
+            year = anime.year;
+          }
+          const badges = [];
+          if (episodes) badges.push(`<div class="badge">${episodes} eps</div>`);
+          if (score) badges.push(`<div class="badge">⭐ ${score}</div>`);
+          if (year) badges.push(`<div class="badge">${year}</div>`);
+
+          // Watch Anime button links
+          let animeLink = '';
+          if (currentLang === 'ru') {
+            // Используем оригинальное название для slug
+            function slugify(str) {
+              return str
+                .toLowerCase()
+                .replace(/ё/g, 'e')
+                .replace(/[^a-z0-9\s-]/gi, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            }
+            const originalName = anime.name;
+            animeLink = `https://anilibria.wiki//release/${slugify(originalName)}.html`;
+          } else {
+            animeLink = `https://www.crunchyroll.com/search?from=search&q=${encodeURIComponent(title)}`;
+          }
+
+          box.innerHTML = `
+            <img class="anime-img" src="${img}" alt="${title}">
+            <div class="anime-content">
+              <div class="anime-title">${title}</div>
+              <div class="badges">${badges.join("")}</div>
+              <div class="anime-desc">${desc}</div>
+              <button class="watch-btn">${translations[currentLang].watchAnime}</button>
+            </div>
+          `;
+          // Обработчик для кнопки 'Смотреть аниме'
+          box.querySelector('.watch-btn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (currentLang === 'en') {
+              window.location.href = `choose.html?anime=${encodeURIComponent(title)}`;
+            } else {
+              window.open(animeLink, '_blank');
+            }
+          });
+          // При клике на карточку — переход на card.html с параметрами
+          box.addEventListener('click', function(e) {
+            // Не срабатывает при клике на кнопку "Смотреть аниме"
+            if (e.target.classList.contains('watch-btn')) return;
+            const params = new URLSearchParams({
+              title,
+              desc,
+              img,
+              episodes: episodes || '',
+              score: score || '',
+              year: year || ''
+            });
+            window.location.href = `card.html?${params.toString()}`;
+          });
+          container.appendChild(box);
+        });
+
+      } catch (e) {
+        console.error("Error loading anime:", e);
       }
     }
 
-    renderDays();
+    async function loadInitial() {
+      for (let i=1; i<=2; i++) {
+        currentPage = i;
+        await loadAnime();
+      }
+      currentPage = 2;
+    }
+    loadInitial();
+
+    document.getElementById("loadMoreBtn").addEventListener("click", () => {
+      currentPage++;
+      loadAnime();
+    });
+
+    document.getElementById("searchInput").addEventListener("keyup", async function() {
+      searchQuery = this.value.trim();
+      currentPage = 1;
+      searchMode = searchQuery.length > 0;
+      await loadAnime(true);
+    });
+
+    // Mobile menu logic
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const searchIcon = document.getElementById('searchIcon');
+    const searchDiv = document.querySelector('.search');
+
+    menuBtn.addEventListener('click', () => {
+      const isVisible = mobileMenu.style.display === 'flex';
+      mobileMenu.style.display = isVisible ? 'none' : 'flex';
+    });
+
+    searchIcon.addEventListener('click', () => {
+      const isVisible = searchDiv.style.display === 'block';
+      searchDiv.style.display = isVisible ? 'none' : 'block';
+    });
+
+    // Mobile language button
+    const mobileLangBtn = document.getElementById('mobileLangBtn');
+    mobileLangBtn.addEventListener('click', () => {
+      if (currentLang === 'en') {
+        mobileLangBtn.textContent = 'Русский';
+        currentLang = 'ru';
+        document.body.setAttribute('lang', 'ru');
+      } else {
+        mobileLangBtn.textContent = 'English';
+        currentLang = 'en';
+        document.body.setAttribute('lang', 'en');
+      }
+      updateLanguageUI();
+      loadAnime(true);
+      mobileMenu.style.display = 'none'; // close menu
+    });
+
+    // Update mobile menu on language change
+    function updateMobileMenu() {
+      document.getElementById('mobileRandomizerBtn').textContent = translations[currentLang].randomizerBtn;
+      mobileLangBtn.textContent = currentLang === 'en' ? 'Русский' : 'English';
+    }
+    updateMobileMenu();
   </script>
 </body>
 </html>
-
-
-
